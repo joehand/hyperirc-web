@@ -24,6 +24,7 @@
     "url": "https://github.com/joehand/hyperirc-web.git"
   },
   "scripts": {
+    "build": "bankai build index.js dist/",
     "start": "bankai index.js -w"
   },
   "dependencies": {
