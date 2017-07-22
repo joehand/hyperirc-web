@@ -158,7 +158,7 @@ function updateTimestamps (state, emitter) {
 }
 
 function connectWs (state, emitter) {
-  var ws = wss('ws://localhost:8080') // TODO: configure ws endpoint?
+  var ws = wss('ws://archiver.jhand.space') // TODO: configure ws endpoint?
   state = Object.assign(state, {
     channel: '#dat',
     key: '227d9212ee85c0f14416885c5390f2d270ba372252e781bf45a6b7056bb0a1b5',
