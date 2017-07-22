@@ -1,0 +1,43 @@
+{
+  "name": "hyperirc-web",
+  "description": "read hyperirc over websockets",
+  "version": "1.0.0",
+  "author": "Joe Hand <joe@hand.email>",
+  "bugs": {
+    "url": "https://github.com/joehand/hyperirc-web/issues"
+  },
+  "devDependencies": {
+    "standard": "*",
+    "tap-spec": "^4.0.2",
+    "tape": "^4.0.0"
+  },
+  "homepage": "https://github.com/joehand/hyperirc-web",
+  "keywords": [
+    "dat",
+    "hypercore",
+    "irc"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joehand/hyperirc-web.git"
+  },
+  "scripts": {
+    "start": "bankai index.js -w"
+  },
+  "dependencies": {
+    "autolinker": "^1.4.3",
+    "bankai": "^8.1.1",
+    "choo": "^5.6.2",
+    "choo-log": "^6.1.2",
+    "hypercore": "^6.6.3",
+    "lodash": "^4.17.4",
+    "moment": "^2.18.1",
+    "pump": "^1.0.2",
+    "random-access-memory": "^2.4.0",
+    "sheetify": "^6.1.0",
+    "tachyons": "^4.7.4",
+    "websocket-stream": "^5.0.0"
+  }
+}
