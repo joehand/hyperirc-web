@@ -9,7 +9,6 @@ var pump = require('pump')
 var moment = require('moment')
 var Autolinker = require('autolinker')
 var debounce = require('lodash/debounce')
-var throttle = require('lodash/throttle')
 var logo = require('./elements/logo')
 
 css('tachyons')
@@ -82,8 +81,8 @@ function mainView (state, emit) {
           ${logoEl}
         </a>
         <div class="flex-grow flex items-center">
-          <a class="link dim white pa1 f6 f5-ns dib mr3 mr4-ns" href="#" title="About">source</a>
-          <a class="link dim white pa1 f6 f5-ns dib mr3 mr4-ns" href="#" title="Store">chat</a>
+          <a class="link dim white pa1 f6 f5-ns dib mr3 mr4-ns" href="https://github.com/joehand/hyperirc-web" title="hyperirc-web">source</a>
+          <a class="link dim white pa1 f6 f5-ns dib mr3 mr4-ns" href="https://webchat.freenode.net/?channels=dat" title="Join Chat">chat</a>
         </div>
       </nav>
     </footer>
@@ -101,7 +100,7 @@ function mainView (state, emit) {
   return html`
     <body class="avenir" onscroll=${onScrollDebounced}>
       ${footer}
-      <div class="mw5 mw7-ns center mb6">
+      <div class="mw-100 mw7-ns center mb6">
         <article class="pa3 ph5-ns">
           <h3 class="f6 ttu tracked mt0">Dat project chat log. Join on <a href="https://webchat.freenode.net/?channels=dat">freenode</a> or <a href="http://gitter.im/datproject/discussions">Gitter.im</a>.</h3>
           <p class="measure f5 lh-copy">
@@ -177,7 +176,6 @@ function connectWs (state, emitter) {
 
     var stream = state.feed.createReadStream({live: false, start: state.startIndex, end: state.startIndex + loadNum})
     stream.on('data', function (data) {
-      emitter.emit('log:info', data)
       msgs.unshift(parseMessage(data))
     })
     stream.on('end', function () {
@@ -212,7 +210,7 @@ function connectWs (state, emitter) {
     return data
   }
 
-  function createFeed (key) {
+  function createFeed () {
     var feed = hypercore(ram, state.key, {sparse: true, valueEncoding: 'json'})
 
     feed.on('ready', function () {
@@ -224,15 +222,18 @@ function connectWs (state, emitter) {
       feed.update(function () {
         state.startIndex = Math.max(feed.length - 20, 1)
         feed.createReadStream({live: true, start: state.startIndex}).on('data', function (data) {
-          emitter.emit('log:info', data)
           emitter.emit('message', data)
         })
       })
     })
 
-    pump(ws, feed.replicate(), ws, function (err) {
-      emitter.emit('log:error', err)
-      state.connected = false
-    })
+    replicate()
+
+    function replicate () {
+      pump(ws, feed.replicate({live: true}), ws, function (err) {
+        emitter.emit('log:error', err)
+        state.connected = false
+      })
+    }
   }
 }
