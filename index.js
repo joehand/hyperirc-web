@@ -14,11 +14,11 @@ var logo = require('./elements/logo')
 css('tachyons')
 css`
   .pulse-circle {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     box-shadow: 0 0 0 rgba(205, 236, 255, 0.6);
-    animation: pulse 3s 2s infinite;
+    animation: pulse 4s 2s infinite;
   }
   .pulse-circle:hover {
     animation: none;
@@ -108,14 +108,14 @@ function mainView (state, emit) {
           </p>
         </article>
         <div class="near-black bg-washed-blue">
-          <a class="db pa2 ph5-ns bb b--black-10 bg-light-gray br3 br--top">
-            <div class="f6 mt3 ttu tracked">
+          <div class="flex justify-between pa1 ph5-ns bb b--black-10 bg-light-gray br3 br--top">
+            <div class="flex items-center f6 ttu tracked">
               <b class="mr2">${state.channel}</b>
             </div>
-            <p class="f5 gray code mt2 lh-copy measure-wide">
+            <p class="flex-grow flex items-center f6 gray code ma0 lh-copy measure-wide">
               ${state.connected ? html`<span><span class="v-mid mr2 bg-light-blue dib pulse-circle"></span>connected</span>` : 'Connecting...'}
             </p>
-          </a>
+          </div>
           ${state.messages.map(data => {
             var msgEl = html`<p class="f5 mt2 lh-copy code"></p>`
             msgEl.innerHTML = data.html
@@ -227,12 +227,17 @@ function connectWs (state, emitter) {
       })
     })
 
+    feed.on('download', function () {
+      state.connected = true
+    })
+
     replicate()
 
     function replicate () {
       pump(ws, feed.replicate({live: true}), ws, function (err) {
         emitter.emit('log:error', err)
         state.connected = false
+        // replicate() replicate again if it closes?
       })
     }
   }
