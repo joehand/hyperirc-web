@@ -157,14 +157,14 @@ function updateTimestamps (state, emitter) {
 }
 
 function connectWs (state, emitter) {
-  var ws = wss('ws://archiver.jhand.space') // TODO: configure ws endpoint?
   state = Object.assign(state, {
     channel: '#dat',
     key: '227d9212ee85c0f14416885c5390f2d270ba372252e781bf45a6b7056bb0a1b5',
     feed: null,
     messages: [],
     connected: false,
-    startIndex: 1
+    startIndex: 1,
+    wsUrl: 'ws://archiver.jhand.space' // TODO: configure ws endpoint?
   })
 
   if (!state.feed) createFeed(state.key)
@@ -234,7 +234,10 @@ function connectWs (state, emitter) {
     replicate()
 
     function replicate () {
-      state.connected = true
+      var ws = wss(state.wsUrl)
+      ws.on('connect', function () {
+        state.connected = true
+      })
       pump(ws, feed.replicate({live: true}), ws, function (err) {
         emitter.emit('log:error', err)
         state.connected = false
