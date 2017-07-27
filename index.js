@@ -234,10 +234,11 @@ function connectWs (state, emitter) {
     replicate()
 
     function replicate () {
+      state.connected = true
       pump(ws, feed.replicate({live: true}), ws, function (err) {
         emitter.emit('log:error', err)
         state.connected = false
-        // replicate() replicate again if it closes?
+        replicate() // again if it closes?
       })
     }
   }
