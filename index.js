@@ -88,15 +88,6 @@ function mainView (state, emit) {
     </footer>
   `
 
-  if (!state.messages.length) {
-    return html`
-      <body class="avenir">
-        ${footer}
-        hello
-      </body>
-    `
-  }
-
   return html`
     <body class="avenir" onscroll=${onScrollDebounced}>
       ${footer}
@@ -116,24 +107,38 @@ function mainView (state, emit) {
               ${state.connected ? html`<span><span class="v-mid mr2 bg-light-blue dib pulse-circle"></span>connected</span>` : 'Connecting...'}
             </p>
           </div>
-          ${state.messages.map(data => {
-            var msgEl = html`<p class="f5 mt2 lh-copy code"></p>`
-            msgEl.innerHTML = data.html
-
-            return html`
-              <div class="pa2 ph5-ns bb b--black-10">
-                <div class="f6 mt3 ttu tracked">
-                  <b class="mr2">${data.from}</b><span class="">${data.moment.fromNow()}</span>
-                  <br><span class="f7 mid-gray">${data.gitter ? 'via gitter  ' : ''}</span>
-                </div>
-                ${msgEl}
-              </div>
-            `
-          })}
+          ${state.messages.length ? messages() : loading() }
         </div>
       </div>
     </body>
   `
+
+  function messages () {
+    return state.messages.map(data => {
+      var msgEl = html`<p class="f5 mt2 lh-copy code"></p>`
+      msgEl.innerHTML = data.html
+
+      return html`
+        <div class="pa2 ph5-ns bb b--black-10">
+          <div class="f6 mt3 ttu tracked">
+            <b class="mr2">${data.from}</b><span class="">${data.moment.fromNow()}</span>
+            <br><span class="f7 mid-gray">${data.gitter ? 'via gitter  ' : ''}</span>
+          </div>
+          ${msgEl}
+        </div>
+      `
+    })
+  }
+
+  function loading () {
+    return html`
+      <div class="pa2 ph5-ns bb b--black-10">
+        <div class="f6 mt3 ttu tracked">
+        </div>
+        <p class="f5 mt2 lh-copy code">loading...</p>
+      </div>
+    `
+  }
 
   function onScroll (e) {
     // emit at bottom
